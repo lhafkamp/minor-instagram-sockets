@@ -1,5 +1,5 @@
 # minor-instagram-sockets
-Assignments for the course Real-Time Web. For this assignment I used the <a href="https://www.instagram.com/developer/>Instagram API</a>.
+Assignments for the course Real-Time Web. For this assignment I used the <a href="https://www.instagram.com/developer/">Instagram API</a>.
 
 ## Build
 To run the application:
@@ -31,7 +31,3 @@ To install the Node dependencies.
 npm start
 ```
 To start the server on port `4000`  
-
-## Env
-To run the application:
-```bash
