@@ -20,7 +20,11 @@ const client_id = process.env.CLIENT_ID;
 const client_secret = process.env.CLIENT_SECRET;
 const redirect_uri = process.env.REDIRECT_URI;
 const response_type = 'code';
-const scope = 'basic';
+const scope = 'basic+public_content';
+
+// will be filled with the access token and userId for testing
+let aToken = '';
+let userId = '';
 
 // url with all the needed variables
 const auth_url = `https://api.instagram.com/oauth/authorize/?client_id=${client_id}&redirect_uri=${redirect_uri}&response_type=${response_type}&scope=${scope}`;
@@ -44,9 +48,26 @@ app.get('/succes', (req, res) => {
 			code: req.query.code
 		}
 	}, (error, response, body) => {
-		console.log(body);
+		if (error) {
+			console.error('auth error, everything sucks');
+		} else {
+			data = JSON.parse(body);
+			aToken = data.access_token;
+			userId = data.user.id;
+			res.render('succes');
+		}
 	});
-	res.render('succes');
+});
+
+// render the main page with instagram data
+app.get('/main', (req, res) => {
+	request(`https://api.instagram.com/v1/users/${userId}/media/recent/?access_token=${aToken}`, (error, response, body) => {
+		data = JSON.parse(body);
+		imageData = data.data[0];
+		res.render('main', {
+			imageData: imageData
+		});
+	});
 });
 
 // 404
