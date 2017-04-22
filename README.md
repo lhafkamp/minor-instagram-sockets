@@ -1,6 +1,8 @@
 # minor-instagram-sockets
 Assignments for the course Real-Time Web. For this assignment I used the <a href="https://www.instagram.com/developer/">Instagram API</a>.
 
+_for now I only got the oauth working, more coming this week_
+
 ## Build
 To run the application:
 ```bash
