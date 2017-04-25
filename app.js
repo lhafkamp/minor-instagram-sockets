@@ -29,11 +29,6 @@ let userId = '';
 // url with all the needed variables
 const auth_url = `https://api.instagram.com/oauth/authorize/?client_id=${client_id}&redirect_uri=${redirect_uri}&response_type=${response_type}&scope=${scope}`;
 
-// socket on connection
-io.on('connection', socket => {
-	console.log(`connected`);
-});
-
 // render the index page
 app.get('/', (req, res) => {
 	res.render('index', {
@@ -68,9 +63,13 @@ app.get('/succes', (req, res) => {
 app.get('/main', (req, res) => {
 	request(`https://api.instagram.com/v1/users/${userId}/media/recent/?access_token=${aToken}`, (error, response, body) => {
 		data = JSON.parse(body);
-		imageData = data.data[0];
-		io.sockets.emit('imageData', {imageData});
 		res.render('main');
+
+		imageData = data.data[0];
+
+		io.on('connection', (socket) => {
+			socket.emit('welcome', imageData);
+		});
 	});
 });
 
