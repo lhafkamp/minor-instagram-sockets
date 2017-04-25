@@ -61,16 +61,26 @@ app.get('/succes', (req, res) => {
 
 // render the main page with instagram data
 app.get('/main', (req, res) => {
-	request(`https://api.instagram.com/v1/users/${userId}/media/recent/?access_token=${aToken}`, (error, response, body) => {
-		data = JSON.parse(body);
-		res.render('main');
+	let oldData = {};
+	res.render('main');
+	setInterval(() => {
+		request(`https://api.instagram.com/v1/users/${userId}/media/recent/?access_token=${aToken}`, (error, response, body) => {
+			data = JSON.parse(body);
 
-		imageData = data.data[0];
+			if (oldData != data.data[0].images.thumbnail.url) {
+				oldData = data.data[0].images.thumbnail.url;
 
-		io.on('connection', (socket) => {
-			socket.emit('welcome', imageData);
+				console.log('NEW DATA HEREEEEE', data.data[0].images.thumbnail.url);
+				console.log('OLD DATA GOES HERE', oldData);
+				
+				imageData = data.data[0];
+
+				io.on('connection', (socket) => {
+					socket.emit('welcome', imageData);
+				});
+			}
 		});
-	});
+	}, 5000);
 });
 
 // 404
