@@ -69,9 +69,8 @@ app.get('/main', (req, res) => {
 	request(`https://api.instagram.com/v1/users/${userId}/media/recent/?access_token=${aToken}`, (error, response, body) => {
 		data = JSON.parse(body);
 		imageData = data.data[0];
-		res.render('main', {
-			imageData: imageData
-		});
+		io.sockets.emit('imageData', {imageData});
+		res.render('main');
 	});
 });
 
