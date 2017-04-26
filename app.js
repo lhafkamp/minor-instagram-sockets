@@ -72,12 +72,10 @@ app.get('/main', (req, res) => {
 
 				console.log('NEW DATA HEREEEEE', data.data[0].images.thumbnail.url);
 				console.log('OLD DATA GOES HERE', oldData);
-				
+
 				imageData = data.data[0];
 
-				io.on('connection', (socket) => {
-					socket.emit('welcome', imageData);
-				});
+				io.sockets.emit('welcome', imageData);
 			}
 		});
 	}, 5000);
@@ -88,6 +86,17 @@ app.get('*', (req, res) => {
 	res.render('error');
 });
 
+const connections = [];
+
+io.on('connection', socket => {
+  connections.push(socket);
+  console.log('Connected: %s sockets', connections.length);
+
+  socket.on('disconnect', () => {
+    connections.splice(connections.indexOf(socket), 1);
+    console.log('Disconnected: %s sockets connected', connections.length);
+  });
+});
 
 // run the app
 http.listen(4000, () => {
