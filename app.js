@@ -29,11 +29,6 @@ let userId = '';
 // url with all the needed variables
 const auth_url = `https://api.instagram.com/oauth/authorize/?client_id=${client_id}&redirect_uri=${redirect_uri}&response_type=${response_type}&scope=${scope}`;
 
-// socket on connection
-io.on('connection', socket => {
-	console.log(`connected`);
-});
-
 // render the index page
 app.get('/', (req, res) => {
 	res.render('index', {
@@ -66,13 +61,24 @@ app.get('/succes', (req, res) => {
 
 // render the main page with instagram data
 app.get('/main', (req, res) => {
-	request(`https://api.instagram.com/v1/users/${userId}/media/recent/?access_token=${aToken}`, (error, response, body) => {
-		data = JSON.parse(body);
-		imageData = data.data[0];
-		res.render('main', {
-			imageData: imageData
+	let oldData = {};
+	res.render('main');
+	setInterval(() => {
+		request(`https://api.instagram.com/v1/users/${userId}/media/recent/?access_token=${aToken}`, (error, response, body) => {
+			data = JSON.parse(body);
+
+			if (oldData != data.data[0].images.thumbnail.url) {
+				oldData = data.data[0].images.thumbnail.url;
+
+				console.log('NEW DATA HEREEEEE', data.data[0].images.thumbnail.url);
+				console.log('OLD DATA GOES HERE', oldData);
+
+				imageData = data.data[0];
+
+				io.sockets.emit('welcome', imageData);
+			}
 		});
-	});
+	}, 5000);
 });
 
 // 404
@@ -80,6 +86,17 @@ app.get('*', (req, res) => {
 	res.render('error');
 });
 
+const connections = [];
+
+io.on('connection', socket => {
+  connections.push(socket);
+  console.log('Connected: %s sockets', connections.length);
+
+  socket.on('disconnect', () => {
+    connections.splice(connections.indexOf(socket), 1);
+    console.log('Disconnected: %s sockets connected', connections.length);
+  });
+});
 
 // run the app
 http.listen(4000, () => {
