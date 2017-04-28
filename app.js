@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const request = require('request');
+const mongoose = require('mongoose');
 
 require('dotenv').config();
 
@@ -14,6 +15,79 @@ app.use(express.static('public'));
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
+
+
+
+// mongoDB
+const MONGO_PASS = process.env.MONGO_PASS;
+const MONGO_DATABASE = process.env.MONGO_DATABASE;
+
+mongoose.connect(`mongodb://lhafkamp:${MONGO_PASS}@clusterluuk-shard-00-00-z8jtq.mongodb.net:27017,clusterluuk-shard-00-01-z8jtq.mongodb.net:27017,clusterluuk-shard-00-02-z8jtq.mongodb.net:27017/${MONGO_DATABASE}?ssl=true&replicaSet=ClusterLuuk-shard-0&authSource=admin`);
+const Schema = mongoose.Schema;
+
+const userSchema = new Schema({
+	name: String,
+});
+
+userSchema.methods.dudify = function() {
+	this.name = this.name + '-dude';
+	return this.name;
+};
+
+const User = mongoose.model('User', userSchema);
+
+const luuk = new User({
+	name: 'Luuk',
+	username: 'toro',
+	password: 'password'
+});
+
+luuk.dudify(function(err, name) {
+	if (err) throw err;
+	console.log(`your new name is ${name}`);
+});
+
+const peter = User({
+	name: 'Peter',
+	username: 'notPeter',
+	password: 'password',
+	admin: true
+});
+
+luuk.save(function(err) {
+	if (err) throw err;
+	console.log('User saved succesfully!');
+});
+
+peter.save(function(err) {
+	if (err) throw err;
+	console.log('new user created!');
+})
+
+// find all users
+User.find({}, function(err, users) {
+	if (err) throw err;
+	console.log(users);
+})
+
+// find someone specific
+User.find({ name: 'Peter' }, function(err, user) {
+	if (err) throw err;
+	console.log(user);
+})
+
+// find someone and update
+User.findOneAndUpdate({ name: 'Peter' }, { name: 'Bob' }, function(err, user) {
+  if (err) throw err;
+  console.log(user);
+});
+
+// find and remove the user
+User.findOneAndRemove({ name: 'Peter' }, function(err) {
+  if (err) throw err;
+  console.log('User deleted!');
+});
+
 
 // set up all variables needed for oauth
 const client_id = process.env.CLIENT_ID;
