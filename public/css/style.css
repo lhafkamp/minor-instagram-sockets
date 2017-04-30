@@ -20,6 +20,16 @@ body {
 .pic img {
 	filter: brightness(100%);
 	transition: 2s filter;
+	z-index: 200;
+}
+
+.pic p {
+	color: white;
+	z-index: 2000;
+	position: absolute;
+	margin: 0;
+	padding: .5em;
+	font-size: 3em;
 }
 
 .pic div {

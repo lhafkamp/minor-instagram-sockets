@@ -1,11 +1,13 @@
 <%- include ./part/header.ejs %>
 
 <div>
-	<h1>Welcome back</h1>
 	<div class="pics">
 		<% imageArray.forEach((image) => { %>
 			<div class="pic">
-				<img src="<%= image %>"/>
+				<div>
+					<img src="<%= image %>"/>
+					<p>100</p>
+				</div>
 				<div>
 					<button>bad</button>
 					<button>good</button>
