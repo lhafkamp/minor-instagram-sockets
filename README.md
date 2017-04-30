@@ -42,3 +42,8 @@ To start the server on port `4000`
 -  [ ] add a judge-system which blurs out bad pictures
 -  [ ] proper routing
 -  [ ] complete the README
+
+## Wishlist
+-  [ ] loading indicator for new images
+-  [ ] profile pages where you can check how your photo's are holding up
+-  [ ] categories
