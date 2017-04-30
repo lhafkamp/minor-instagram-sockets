@@ -15,15 +15,7 @@ function decreaseScore() {
 		score -= 25;
 	}
 
-
-
-
-
-	this.parentNode.parentNode.querySelector('img').style.filter = `brightness(${score}%)`;
-
-
-
-
+	// this.parentNode.parentNode.querySelector('img').style.filter = `brightness(${score}%)`;
 	thisParent.querySelector('img').style.filter = `brightness(${score}%)`;
 	thisParent.querySelector('p').innerHTML = `${score}`;
 };
