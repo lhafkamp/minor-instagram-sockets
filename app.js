@@ -20,6 +20,7 @@ app.set('view engine', 'ejs');
 const MONGO_PASS = process.env.MONGO_PASS;
 const MONGO_DATABASE = process.env.MONGO_DATABASE;
 
+mongoose.Promise = global.Promise;
 mongoose.connect(`mongodb://127.0.0.1:27017`);
 const Schema = mongoose.Schema;
 
