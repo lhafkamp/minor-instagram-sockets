@@ -16,77 +16,24 @@ app.use(express.static('public'));
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-
-
 // mongoDB
 const MONGO_PASS = process.env.MONGO_PASS;
 const MONGO_DATABASE = process.env.MONGO_DATABASE;
 
-mongoose.connect(`mongodb://lhafkamp:${MONGO_PASS}@clusterluuk-shard-00-00-z8jtq.mongodb.net:27017,clusterluuk-shard-00-01-z8jtq.mongodb.net:27017,clusterluuk-shard-00-02-z8jtq.mongodb.net:27017/${MONGO_DATABASE}?ssl=true&replicaSet=ClusterLuuk-shard-0&authSource=admin`);
+mongoose.connect(`mongodb://127.0.0.1:27017`);
 const Schema = mongoose.Schema;
 
-const userSchema = new Schema({
-	name: String,
+const imageSchema = new Schema({
+	image: String,
 });
 
-userSchema.methods.dudify = function() {
-	this.name = this.name + '-dude';
-	return this.name;
-};
+const Image = mongoose.model('Image', imageSchema);
 
-const User = mongoose.model('User', userSchema);
-
-const luuk = new User({
-	name: 'Luuk',
-	username: 'toro',
-	password: 'password'
-});
-
-luuk.dudify(function(err, name) {
+Image.find({}, function(err, images) {
 	if (err) throw err;
-	console.log(`your new name is ${name}`);
-});
-
-const peter = User({
-	name: 'Peter',
-	username: 'notPeter',
-	password: 'password',
-	admin: true
-});
-
-luuk.save(function(err) {
-	if (err) throw err;
-	console.log('User saved succesfully!');
-});
-
-peter.save(function(err) {
-	if (err) throw err;
-	console.log('new user created!');
+	console.log('These are the following images that are saved:');
+	console.log(images);
 })
-
-// find all users
-User.find({}, function(err, users) {
-	if (err) throw err;
-	console.log(users);
-})
-
-// find someone specific
-User.find({ name: 'Peter' }, function(err, user) {
-	if (err) throw err;
-	console.log(user);
-})
-
-// find someone and update
-User.findOneAndUpdate({ name: 'Peter' }, { name: 'Bob' }, function(err, user) {
-  if (err) throw err;
-  console.log(user);
-});
-
-// find and remove the user
-User.findOneAndRemove({ name: 'Peter' }, function(err) {
-  if (err) throw err;
-  console.log('User deleted!');
-});
 
 
 // set up all variables needed for oauth
@@ -144,12 +91,22 @@ app.get('/main', (req, res) => {
 			if (oldData != data.data[0].images.thumbnail.url) {
 				oldData = data.data[0].images.thumbnail.url;
 
-				console.log('NEW DATA HEREEEEE', data.data[0].images.thumbnail.url);
-				console.log('OLD DATA GOES HERE', oldData);
+				// console.log('NEW DATA HEREEEEE', data.data[0].images.thumbnail.url);
+				// console.log('OLD DATA GOES HERE', oldData);
+				console.log('new data found, updating..');
 
 				imageData = data.data[0];
 
 				io.sockets.emit('welcome', imageData);
+
+				const img = new Image({
+					image: data.data[0].images.thumbnail.url
+				});
+
+				img.save(function(err) {
+					if (err) throw err;
+					console.log('Image saved succesfully!');
+				});
 			}
 		});
 	}, 5000);
