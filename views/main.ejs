@@ -1,16 +1,12 @@
 <%- include ./part/header.ejs %>
 
-<div>
-	<h1>Welcome back</h1>
-	<div class="pics">
-
-		<% imageArray.forEach((image) => { %>
-			<img src="<%= image %>"/>
-		<% }); %>
-
-	</div>
+<h1>Welcome back</h1>
+<div class="pics">
+	<% imageArray.forEach((image) => { %>
+		<img src="<%= image %>"/>
+	<% }); %>
 </div>
 
 <script src="/socket.io/socket.io.js"></script>
-<script src="/js/io.js"></script>
+<script src="/js/bundle.js"></script>
 <%- include ./part/footer.ejs %>
