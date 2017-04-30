@@ -1,6 +1,8 @@
 # minor-instagram-sockets
 Assignments for the course Real-Time Web. For this assignment I used the <a href="https://www.instagram.com/developer/">Instagram API</a>.
 
+_for now I only got the oauth working, more coming this week_
+
 ## Build
 To run the application:
 ```bash
@@ -31,3 +33,12 @@ To install the Node dependencies.
 npm start
 ```
 To start the server on port `4000`  
+
+## TODO
+-  [x] getting the oauth to work
+-  [x] saving images to the database
+-  [ ] showing individual users from the database
+-  [ ] styling
+-  [ ] do something interesting with the data I get
+-  [ ] proper routing
+-  [ ] complete the README
