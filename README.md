@@ -39,6 +39,6 @@ To start the server on port `4000`
 -  [x] saving images to the database
 -  [ ] showing individual users from the database
 -  [ ] styling
--  [ ] do something interesting with the data I get
+-  [ ] add a judge-system which blurs out bad pictures
 -  [ ] proper routing
 -  [ ] complete the README
