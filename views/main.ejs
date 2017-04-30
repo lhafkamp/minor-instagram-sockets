@@ -3,14 +3,17 @@
 <div>
 	<h1>Welcome back</h1>
 	<div class="pics">
-
 		<% imageArray.forEach((image) => { %>
-			<img src="<%= image %>"/>
+			<div class="pic">
+				<img src="<%= image %>"/>
+				<div>
+					<button>bad</button>
+					<button>good</button>
+				</div>
+			</div>
 		<% }); %>
-
 	</div>
 </div>
 
 <script src="/socket.io/socket.io.js"></script>
-<script src="/js/io.js"></script>
 <%- include ./part/footer.ejs %>
