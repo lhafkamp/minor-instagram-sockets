@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const request = require('request');
+const mongoose = require('mongoose');
 
 require('dotenv').config();
 
@@ -14,6 +15,20 @@ app.use(express.static('public'));
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
+
+// mongoDB
+const MONGO_PASS = process.env.MONGO_PASS;
+const MONGO_DATABASE = process.env.MONGO_DATABASE;
+
+mongoose.connect(`mongodb://127.0.0.1:27017`);
+const Schema = mongoose.Schema;
+
+const imageSchema = new Schema({
+	name: String,
+	image: String
+});
+
+const Image = mongoose.model('Image', imageSchema);
 
 // set up all variables needed for oauth
 const client_id = process.env.CLIENT_ID;
@@ -59,23 +74,43 @@ app.get('/succes', (req, res) => {
 	});
 });
 
+Image.find({}, (err, objects) => {
+	objects.forEach(obj => {
+		imageArray.push(obj.image);
+	});
+});
+
+let imageArray = [];
+
 // render the main page with instagram data
 app.get('/main', (req, res) => {
+	res.render('main', {
+		imageArray: imageArray
+	});
+
 	let oldData = {};
-	res.render('main');
+	
 	setInterval(() => {
 		request(`https://api.instagram.com/v1/users/${userId}/media/recent/?access_token=${aToken}`, (error, response, body) => {
 			data = JSON.parse(body);
+			imageData = data.data[0].images.low_resolution.url;
 
-			if (oldData != data.data[0].images.thumbnail.url) {
-				oldData = data.data[0].images.thumbnail.url;
+			if (oldData != imageData) {
+				oldData = imageData;
 
-				console.log('NEW DATA HEREEEEE', data.data[0].images.thumbnail.url);
-				console.log('OLD DATA GOES HERE', oldData);
+				console.log('new data found, updating..');
 
-				imageData = data.data[0];
+				const img = new Image({
+					name: 'picture',
+					image: imageData
+				});
 
-				io.sockets.emit('welcome', imageData);
+				img.save((err) => {
+					if (err) throw err;
+					console.log('new image saved succesfully!');
+				});
+
+				io.sockets.emit('newPic', img);
 			}
 		});
 	}, 5000);
