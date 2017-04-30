@@ -3,7 +3,11 @@
 <div>
 	<h1>Welcome back</h1>
 	<div class="pics">
-		<!-- pics here -->
+
+		<% imageArray.forEach((image) => { %>
+			<img src="<%= image %>"/>
+		<% }); %>
+
 	</div>
 </div>
 
