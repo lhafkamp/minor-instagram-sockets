@@ -1,7 +1,7 @@
 const socket = io();
-const album = document.querySelector('.pics');
+const addNewPic = document.querySelector('.pic div');
 
 socket.on('newPic', (data) => {
 	const newPics = data.image;
-	album.innerHTML += `<img src="${newPics}"/>`;
+	addNewPic.innerHTML += `<img src="${newPics}"/>`;
 });

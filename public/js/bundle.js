@@ -5,11 +5,11 @@ const yayornay = require('./yayornay');
 console.log('pong');
 },{"./io":2,"./yayornay":3}],2:[function(require,module,exports){
 const socket = io();
-const album = document.querySelector('.pics');
+const addNewPic = document.querySelector('.pic div');
 
 socket.on('newPic', (data) => {
 	const newPics = data.image;
-	album.innerHTML += `<img src="${newPics}"/>`;
+	addNewPic.innerHTML += `<img src="${newPics}"/>`;
 });
 },{}],3:[function(require,module,exports){
 const photo = document.querySelectorAll('.pic img');
