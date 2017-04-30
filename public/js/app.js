@@ -1,4 +1,4 @@
 console.log('ping');
-const socketio = require('./io');
 const yayornay = require('./yayornay');
+const socketio = require('./io');
 console.log('pong');

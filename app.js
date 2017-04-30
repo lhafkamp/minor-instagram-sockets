@@ -46,11 +46,11 @@ let userId = '';
 const auth_url = `https://api.instagram.com/oauth/authorize/?client_id=${client_id}&redirect_uri=${redirect_uri}&response_type=${response_type}&scope=${scope}`;
 
 // render the index page
-// app.get('/', (req, res) => {
-// 	res.render('index', {
-// 		auth_url: auth_url
-// 	});
-// });
+app.get('/', (req, res) => {
+	res.render('index', {
+		auth_url: auth_url
+	});
+});
 
 // get the token once the auth is complete and render succes
 app.get('/succes', (req, res) => {
@@ -84,42 +84,37 @@ Image.find({}, (err, objects) => {
 let imageArray = [];
 
 // render the main page with instagram data
-
-// ////////////////////////////////////
-// ************** WARNING ************* SHOULD BE /MAIN ********** //
-// ////////////////////////////////////
-
-app.get('/', (req, res) => {
+app.get('/main', (req, res) => {
 	res.render('main', {
 		imageArray: imageArray
 	});
 
 	let oldData = {};
 	
-	// setInterval(() => {
-	// 	request(`https://api.instagram.com/v1/users/${userId}/media/recent/?access_token=${aToken}`, (error, response, body) => {
-	// 		data = JSON.parse(body);
-	// 		imageData = data.data[0].images.low_resolution.url;
+	setInterval(() => {
+		request(`https://api.instagram.com/v1/users/${userId}/media/recent/?access_token=${aToken}`, (error, response, body) => {
+			data = JSON.parse(body);
+			imageData = data.data[0].images.low_resolution.url;
 
-	// 		if (oldData != imageData) {
-	// 			oldData = imageData;
+			if (oldData != imageData) {
+				oldData = imageData;
 
-	// 			console.log('new data found, updating..');
+				console.log('new data found, updating..');
 
-	// 			const img = new Image({
-	// 				name: 'picture',
-	// 				image: imageData
-	// 			});
+				const img = new Image({
+					name: 'picture',
+					image: imageData
+				});
 
-	// 			img.save((err) => {
-	// 				if (err) throw err;
-	// 				console.log('new image saved succesfully!');
-	// 			});
+				img.save((err) => {
+					if (err) throw err;
+					console.log('new image saved succesfully!');
+				});
 
-	// 			io.sockets.emit('newPic', img);
-	// 		}
-	// 	});
-	// }, 5000);
+				io.sockets.emit('newPic', img);
+			}
+		});
+	}, 3000);
 });
 
 // 404
@@ -130,13 +125,20 @@ app.get('*', (req, res) => {
 const connections = [];
 
 io.on('connection', socket => {
-  connections.push(socket);
-  console.log('Connected: %s sockets', connections.length);
+	connections.push(socket);
+	console.log('Connected: %s sockets', connections.length);
 
-  socket.on('disconnect', () => {
-    connections.splice(connections.indexOf(socket), 1);
-    console.log('Disconnected: %s sockets connected', connections.length);
-  });
+	socket.on('disconnect', () => {
+		connections.splice(connections.indexOf(socket), 1);
+		console.log('Disconnected: %s sockets connected', connections.length);
+	});
+
+	socket.on('remove', (remove) => {
+		Image.findOneAndRemove({ image: `${remove}` }, (err) => {
+			if (err) throw err;
+			console.log('Image deleted!');
+		});
+	})
 });
 
 // run the app

@@ -1,3 +1,6 @@
+const socket = io();
+// TODO remove this ^
+
 const photo = document.querySelectorAll('.pic img');
 const counter = document.querySelectorAll('.pic p');
 const bad = document.querySelectorAll('button:first-of-type');
@@ -8,9 +11,10 @@ function decreaseScore() {
 	let score = Number(thisParent.querySelector('p').textContent);
 
 	if (score < 25) {
-		thisParent.style.display = 'none';
-	} else if (score < 50) {
-		score -= 25;
+		thisParent.style.opacity = .2;
+		// TODO this in io.js v
+		const deadImage = thisParent.querySelector('img').src;
+		socket.emit('remove', deadImage);
 	} else {
 		score -= 25;
 	}
