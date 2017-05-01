@@ -75,5 +75,14 @@ function scoreCounter(e) {
 
 document.body.addEventListener('click', scoreCounter);
 
+const socketio = require('./io');
+console.log('pong');
+},{"./io":2}],2:[function(require,module,exports){
+const socket = io();
+const album = document.querySelector('.pics');
 
+socket.on('newPic', (data) => {
+	const newPics = data.image;
+	album.innerHTML += `<img src="${newPics}"/>`;
+});
 },{}]},{},[1]);
