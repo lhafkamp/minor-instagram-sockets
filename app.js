@@ -100,46 +100,42 @@ app.get('/succes', (req, res) => {
 	});
 });
 
+let imageArray = [];
+
 Image.find({}, (err, objects) => {
 	objects.forEach(obj => {
 		imageArray.push(obj.image);
 	});
 });
 
-// array with all the images from mongoDB
-let imageArray = [];
-
 // render the main page with instagram data
 app.get('/main', (req, res) => {
-	res.render('main', {
-		imageArray: imageArray
-	});
-
-	let oldData = {};
 	
 	setInterval(() => {
 		request(`https://api.instagram.com/v1/users/${userId}/media/recent/?access_token=${aToken}`, (error, response, body) => {
 			data = JSON.parse(body);
 			imageData = data.data[0].images.low_resolution.url;
-			if (!(imageArray.includes(imageData)) && oldData !== imageData) {
-				oldData = imageData;
+			Image.find({ image: imageData }, (err, image) => {
+				if (!image.length > 0) {
+					const img = new Image({
+						name: 'picture',
+						image: imageData
+					});
 
-				console.log('new data found, updating..');
+					img.save((err) => {
+						if (err) throw err;
+						console.log('new image saved succesfully!');
+					});
 
-				const img = new Image({
-					name: 'picture',
-					image: imageData
-				});
-
-				img.save((err) => {
-					if (err) throw err;
-					console.log('new image saved succesfully!');
-				});
-
-				io.sockets.emit('newPic', img);
-			}
+					io.sockets.emit('newPic', img);
+				}
+			});
 		});
 	}, 3000);
+
+	res.render('main', {
+		imageArray: imageArray
+	});
 });
 
 // 404

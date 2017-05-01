@@ -54,7 +54,6 @@ function scoreCounter(e) {
 			thisParent.style.opacity = .2;
 			const deadImage = thisParent.querySelector('img').src;
 			socket.emit('remove', deadImage);
-			e.target.parentNode.parentNode.remove();
 		} else {
 			score -= 25;
 		}
