@@ -9,11 +9,11 @@ function scoreCounter(e) {
 	const thisParent = e.target.parentNode.parentNode
 	let score = Number(thisParent.querySelector('p').textContent);
 	if (e.target.textContent === 'bad') {
-
 		if (score < 25) {
 			thisParent.style.opacity = .2;
 			const deadImage = thisParent.querySelector('img').src;
 			socket.emit('remove', deadImage);
+			e.target.parentNode.parentNode.remove();
 		} else {
 			score -= 25;
 		}

@@ -81,6 +81,7 @@ Image.find({}, (err, objects) => {
 	});
 });
 
+// array with all the images from mongoDB
 let imageArray = [];
 
 // render the main page with instagram data
@@ -95,7 +96,7 @@ app.get('/main', (req, res) => {
 		request(`https://api.instagram.com/v1/users/${userId}/media/recent/?access_token=${aToken}`, (error, response, body) => {
 			data = JSON.parse(body);
 			imageData = data.data[0].images.low_resolution.url;
-			if (!(imageArray.includes(imageData)) && oldData != imageData) {
+			if (!(imageArray.includes(imageData)) && oldData !== imageData) {
 				oldData = imageData;
 
 				console.log('new data found, updating..');
@@ -133,9 +134,10 @@ io.on('connection', socket => {
 	});
 
 	socket.on('remove', (remove) => {
-		Image.findOneAndRemove({ image: `${remove}` }, (err) => {
+		Image.findOneAndRemove({ image: remove }, (err) => {
 			if (err) throw err;
 			console.log('Image deleted!');
+			io.sockets.emit('removeFromDOM', remove);
 		});
 	})
 });

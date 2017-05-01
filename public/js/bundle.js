@@ -6,6 +6,10 @@ console.log('pong');
 },{"./io":2,"./yayornay":3}],2:[function(require,module,exports){
 const socket = io();
 const addNewPic = document.querySelector('.pics');
+const allImages = document.querySelectorAll('.pics .pic div img');
+
+// allImages.forEach(image => image.parentNode.parentNode);
+// allImages.forEach(image => image.src);
 
 socket.on('newPic', (data) => {
 	const newPics = data.image;
@@ -23,6 +27,17 @@ socket.on('newPic', (data) => {
 	`)
 });
 
+allImages.forEach(image => {
+	socket.on('removeFromDOM', (data) => {
+		if (data === image.src) {
+			console.log('hierrr', image.src);
+			image.parentNode.parentNode.remove();
+			console.log('image deleted from the DOM');
+		} else {
+			console.log('image NOT deleted from the DOM');
+		}
+	});
+})
 },{}],3:[function(require,module,exports){
 const socket = io();
 
@@ -35,11 +50,11 @@ function scoreCounter(e) {
 	const thisParent = e.target.parentNode.parentNode
 	let score = Number(thisParent.querySelector('p').textContent);
 	if (e.target.textContent === 'bad') {
-
 		if (score < 25) {
 			thisParent.style.opacity = .2;
 			const deadImage = thisParent.querySelector('img').src;
 			socket.emit('remove', deadImage);
+			e.target.parentNode.parentNode.remove();
 		} else {
 			score -= 25;
 		}

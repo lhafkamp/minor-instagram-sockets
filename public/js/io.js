@@ -1,5 +1,9 @@
 const socket = io();
 const addNewPic = document.querySelector('.pics');
+const allImages = document.querySelectorAll('.pics .pic div img');
+
+// allImages.forEach(image => image.parentNode.parentNode);
+// allImages.forEach(image => image.src);
 
 socket.on('newPic', (data) => {
 	const newPics = data.image;
@@ -16,3 +20,15 @@ socket.on('newPic', (data) => {
 	</div>
 	`)
 });
+
+allImages.forEach(image => {
+	socket.on('removeFromDOM', (data) => {
+		if (data === image.src) {
+			console.log('hierrr', image.src);
+			image.parentNode.parentNode.remove();
+			console.log('image deleted from the DOM');
+		} else {
+			console.log('image NOT deleted from the DOM');
+		}
+	});
+})
