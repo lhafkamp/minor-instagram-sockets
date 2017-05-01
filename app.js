@@ -79,16 +79,22 @@ app.get('/succes', (req, res) => {
 			userId = data.user.id;
 			userName = data.user.full_name;
 
-			const newUser = new User({
-				user_id: userId,
-				name: userName
-			});
+			User.find({ user_id: userId }, (err, user) => {
+				if (user.length > 0) {
+					console.log('user found, carry on');
+				} else {
+					console.log('user NOT found, creating new user..');
+					const newUser = new User({
+						user_id: userId,
+						name: userName
+					});
 
-			newUser.save((err) => {
-				if (err) throw err;
-				console.log('new user saved succesfully!');
+					newUser.save((err) => {
+						if (err) throw err;
+						console.log('new user saved succesfully!');
+					});
+				}
 			});
-
 			res.render('succes');
 		}
 	});
