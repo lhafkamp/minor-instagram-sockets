@@ -17,19 +17,25 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 // mongoDB
-const MONGO_PASS = process.env.MONGO_PASS;
-const MONGO_DATABASE = process.env.MONGO_DATABASE;
-
 mongoose.Promise = global.Promise;
 mongoose.connect(`mongodb://127.0.0.1:27017`);
 const Schema = mongoose.Schema;
 
+// imageSchema
 const imageSchema = new Schema({
 	name: String,
 	image: String
 });
 
 const Image = mongoose.model('Image', imageSchema);
+
+// userSchema
+const userSchema = new Schema({
+	user_id: String,
+	name: String
+});
+
+const User = mongoose.model('User', userSchema);
 
 // set up all variables needed for oauth
 const client_id = process.env.CLIENT_ID;
@@ -68,8 +74,21 @@ app.get('/succes', (req, res) => {
 			console.error('auth error, everything sucks');
 		} else {
 			data = JSON.parse(body);
+
 			aToken = data.access_token;
 			userId = data.user.id;
+			userName = data.user.full_name;
+
+			const newUser = new User({
+				user_id: userId,
+				name: userName
+			});
+
+			newUser.save((err) => {
+				if (err) throw err;
+				console.log('new user saved succesfully!');
+			});
+
 			res.render('succes');
 		}
 	});
