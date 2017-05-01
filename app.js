@@ -82,6 +82,9 @@ Image.find({}, (err, objects) => {
 });
 
 let imageArray = [];
+// setTimeout(function() {
+// 	console.log(imageArray);
+// }, 2000);
 
 // render the main page with instagram data
 app.get('/main', (req, res) => {
@@ -96,7 +99,7 @@ app.get('/main', (req, res) => {
 			data = JSON.parse(body);
 			imageData = data.data[0].images.low_resolution.url;
 
-			if (oldData != imageData) {
+			if (!(imageArray.includes(imageData))) {
 				oldData = imageData;
 
 				console.log('new data found, updating..');
