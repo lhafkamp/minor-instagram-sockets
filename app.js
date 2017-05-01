@@ -95,9 +95,7 @@ app.get('/main', (req, res) => {
 		request(`https://api.instagram.com/v1/users/${userId}/media/recent/?access_token=${aToken}`, (error, response, body) => {
 			data = JSON.parse(body);
 			imageData = data.data[0].images.low_resolution.url;
-
-			// console.log(imageArray, imageData, imageArray.includes(imageData))
-			if (!(imageArray.includes(imageData))) {
+			if (!(imageArray.includes(imageData)) && oldData != imageData) {
 				oldData = imageData;
 
 				console.log('new data found, updating..');
