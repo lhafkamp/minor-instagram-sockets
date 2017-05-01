@@ -114,7 +114,7 @@ app.get('/main', (req, res) => {
 				io.sockets.emit('newPic', img);
 			}
 		});
-	}, 3000);
+	}, 6000);
 });
 
 // 404
