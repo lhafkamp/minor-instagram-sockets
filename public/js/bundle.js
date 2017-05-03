@@ -54,7 +54,6 @@ function scoreCounter(e) {
 			thisParent.style.opacity = .2;
 			const deadImage = thisParent.querySelector('img').src;
 			socket.emit('remove', deadImage);
-			e.target.parentNode.parentNode.remove();
 		} else {
 			score -= 25;
 		}
@@ -75,14 +74,5 @@ function scoreCounter(e) {
 
 document.body.addEventListener('click', scoreCounter);
 
-const socketio = require('./io');
-console.log('pong');
-},{"./io":2}],2:[function(require,module,exports){
-const socket = io();
-const album = document.querySelector('.pics');
 
-socket.on('newPic', (data) => {
-	const newPics = data.image;
-	album.innerHTML += `<img src="${newPics}"/>`;
-});
 },{}]},{},[1]);

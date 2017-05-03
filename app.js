@@ -17,19 +17,29 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 // mongoDB
+const MONGO_USER = process.env.MONGO_USER;
 const MONGO_PASS = process.env.MONGO_PASS;
-const MONGO_DATABASE = process.env.MONGO_DATABASE;
 
 mongoose.Promise = global.Promise;
 mongoose.connect(`mongodb://127.0.0.1:27017`);
+// mongoose.connect(`mongodb://${MONGO_USER}:${MONGO_PASS}@ds131041.mlab.com:31041/instabase`);
 const Schema = mongoose.Schema;
 
+// imageSchema
 const imageSchema = new Schema({
 	name: String,
 	image: String
 });
 
 const Image = mongoose.model('Image', imageSchema);
+
+// userSchema
+const userSchema = new Schema({
+	user_id: String,
+	name: String
+});
+
+const User = mongoose.model('User', userSchema);
 
 // set up all variables needed for oauth
 const client_id = process.env.CLIENT_ID;
@@ -68,12 +78,33 @@ app.get('/succes', (req, res) => {
 			console.error('auth error, everything sucks');
 		} else {
 			data = JSON.parse(body);
+
 			aToken = data.access_token;
 			userId = data.user.id;
+			userName = data.user.full_name;
+
+			User.find({ user_id: userId }, (err, user) => {
+				if (user.length > 0) {
+					console.log('user found, carry on');
+				} else {
+					console.log('user NOT found, creating new user..');
+					const newUser = new User({
+						user_id: userId,
+						name: userName
+					});
+
+					newUser.save((err) => {
+						if (err) throw err;
+						console.log('new user saved succesfully!');
+					});
+				}
+			});
 			res.render('succes');
 		}
 	});
 });
+
+let imageArray = [];
 
 Image.find({}, (err, objects) => {
 	objects.forEach(obj => {
@@ -81,40 +112,34 @@ Image.find({}, (err, objects) => {
 	});
 });
 
-// array with all the images from mongoDB
-let imageArray = [];
-
 // render the main page with instagram data
 app.get('/main', (req, res) => {
-	res.render('main', {
-		imageArray: imageArray
-	});
-
-	let oldData = {};
 	
 	setInterval(() => {
 		request(`https://api.instagram.com/v1/users/${userId}/media/recent/?access_token=${aToken}`, (error, response, body) => {
 			data = JSON.parse(body);
 			imageData = data.data[0].images.low_resolution.url;
-			if (!(imageArray.includes(imageData)) && oldData !== imageData) {
-				oldData = imageData;
+			Image.find({ image: imageData }, (err, image) => {
+				if (!image.length > 0) {
+					const img = new Image({
+						name: 'picture',
+						image: imageData
+					});
 
-				console.log('new data found, updating..');
+					img.save((err) => {
+						if (err) throw err;
+						console.log('new image saved succesfully!');
+					});
 
-				const img = new Image({
-					name: 'picture',
-					image: imageData
-				});
-
-				img.save((err) => {
-					if (err) throw err;
-					console.log('new image saved succesfully!');
-				});
-
-				io.sockets.emit('newPic', img);
-			}
+					io.sockets.emit('newPic', img);
+				}
+			});
 		});
 	}, 3000);
+
+	res.render('main', {
+		imageArray: imageArray
+	});
 });
 
 // 404
