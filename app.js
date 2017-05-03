@@ -81,6 +81,7 @@ app.get('/succes', (req, res) => {
 			userName = data.user.full_name;
 
 			User.find({ user_id: userId }, (err, user) => {
+
 				if (user.length > 0) {
 					console.log('user found, carry on');
 				} else {
@@ -115,6 +116,8 @@ app.get('/main', (req, res) => {
 	setInterval(() => {
 		request(`https://api.instagram.com/v1/users/${userId}/media/recent/?access_token=${aToken}`, (error, response, body) => {
 			data = JSON.parse(body);
+			io.sockets.emit('newUser', data.data[0].user.id);
+
 			imageData = data.data[0].images.low_resolution.url;
 			Image.find({ image: imageData }, (err, image) => {
 				if (!image.length > 0) {
@@ -132,6 +135,7 @@ app.get('/main', (req, res) => {
 				}
 			});
 		});
+	}, 4000);
 
 	res.render('main', {
 		imageArray: imageArray
@@ -161,6 +165,19 @@ io.on('connection', socket => {
 			io.sockets.emit('removeFromDOM', remove);
 		});
 	})
+
+	socket.on('rights', (voteObj) => {
+		Image.findOne({ image: voteObj.img }, (err, data) => {
+			const newRights = data.rights;
+			newRights.push(voteObj.user);
+
+			Image.update({ rights: newRights }, (err, rights => {
+				console.log('rights set');
+			}));
+		});
+		
+		io.sockets.emit('disableButton');
+	});
 });
 
 // run the app
