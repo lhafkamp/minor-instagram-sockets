@@ -3,6 +3,7 @@ const photo = document.querySelectorAll('.pic img');
 const counter = document.querySelectorAll('.pic p');
 const bad = document.querySelectorAll('button:first-of-type');
 const good = document.querySelectorAll('button:last-of-type');
+
 const allImages = document.querySelectorAll('.pics .pic div img');
 let newUser = '';
 

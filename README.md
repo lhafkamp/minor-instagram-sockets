@@ -31,5 +31,19 @@ npm install
 To install the Node dependencies.
 ```bash
 npm start
-```
+```  
 To start the server on port `4000`  
+
+## TODO
+-  [x] getting the oauth to work
+-  [x] saving images to the database
+-  [ ] showing individual users from the database
+-  [ ] styling
+-  [ ] add a judge-system which blurs out bad pictures
+-  [ ] proper routing
+-  [ ] complete the README
+
+## Wishlist
+-  [ ] loading indicator for new images
+-  [ ] profile pages where you can check how your photo's are holding up
+-  [ ] categories

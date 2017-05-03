@@ -16,11 +16,16 @@ app.use(express.static('public'));
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
+
 app.set('socketio', io);
 
 // mongoDB
+const MONGO_USER = process.env.MONGO_USER;
+const MONGO_PASS = process.env.MONGO_PASS;
+
 mongoose.Promise = global.Promise;
-mongoose.connect(`mongodb://127.0.0.1:27017`);
+// mongoose.connect(`mongodb://127.0.0.1:27017`);
+mongoose.connect(`mongodb://${MONGO_USER}:${MONGO_PASS}@ds131041.mlab.com:31041/instabase`);
 const Schema = mongoose.Schema;
 
 // imageSchema
@@ -83,7 +88,6 @@ app.get('/succes', (req, res) => {
 			userName = data.user.full_name;
 
 			User.find({ user_id: userId }, (err, user) => {
-
 				if (user.length > 0) {
 					console.log('user found, carry on');
 				} else {
@@ -118,6 +122,7 @@ app.get('/main', (req, res) => {
 	setInterval(() => {
 		request(`https://api.instagram.com/v1/users/${userId}/media/recent/?access_token=${aToken}`, (error, response, body) => {
 			data = JSON.parse(body);
+
 			io.sockets.emit('newUser', data.data[0].user.id);
 
 			imageData = data.data[0].images.low_resolution.url;
@@ -137,28 +142,12 @@ app.get('/main', (req, res) => {
 				}
 			});
 		});
+
 	}, 4000);
 
 	res.render('main', {
 		imageArray: imageArray
 	});
-
-	// io.on('connection', socket => {
-	// 	User.find({ user_id: 'XXXXXXXX' }, (err, data) => {
-	// 		let userData = data[0].user_id;
-	// 		Image.find({ rights: userData }, (err, data) => {
-	// 			let userRights = data[0].rights;
-	// 			let imageWithRights = data[0].image;
-	// 			if (err) {
-	// 				console.log('user didnt vote');
-	// 			} else {
-	// 				if (userRights.includes(userData)) {
-	// 					io.sockets.emit('hidingButton', imageWithRights);	
-	// 				}
-	// 			}
-	// 		});
-	// 	});
-	// });
 });
 
 // 404
@@ -185,6 +174,7 @@ io.on('connection', socket => {
 		});
 	})
 
+
 	socket.on('rights', (voteObj) => {
 		Image.findOne({ image: voteObj.img }, (err, data) => {
 			const newRights = data.rights;
@@ -200,6 +190,6 @@ io.on('connection', socket => {
 });
 
 // run the app
-http.listen(4000, () => {
-	console.log('Running on http://localhost:4000');
+http.listen(process.env.PORT || 4000, function(){
+  console.log('listening on', http.address().port);
 });
