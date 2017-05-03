@@ -4,13 +4,10 @@ require('./yayornay');
 require('./io');
 console.log('pong');
 },{"./io":2,"./yayornay":3}],2:[function(require,module,exports){
-const socket = io();
+
+const socket = io()
 const addNewPic = document.querySelector('.pics');
 const allImages = document.querySelectorAll('.pics .pic div img');
-
-// allImages.forEach(image => image.parentNode.parentNode);
-// allImages.forEach(image => image.src);
-
 socket.on('newPic', (data) => {
 	const newPics = data.image;
 	addNewPic.insertAdjacentHTML('beforeend', `
@@ -38,17 +35,51 @@ allImages.forEach(image => {
 		}
 	});
 })
+
+
 },{}],3:[function(require,module,exports){
 const socket = io();
-
 const photo = document.querySelectorAll('.pic img');
 const counter = document.querySelectorAll('.pic p');
 const bad = document.querySelectorAll('button:first-of-type');
 const good = document.querySelectorAll('button:last-of-type');
 
+const allImages = document.querySelectorAll('.pics .pic div img');
+let newUser = '';
+
+socket.on('hidingButton', (imageWithRights) => {
+	allImages.forEach(img => {
+		if (img.src === imageWithRights) {
+			img.parentNode.parentNode.querySelectorAll('div button').forEach(btn => btn.style.display = 'none');
+		}
+	})
+});
+
+
+socket.on('newUser', (userId) => {
+	newUser = userId;
+});
+
+
 function scoreCounter(e) {
 	const thisParent = e.target.parentNode.parentNode
 	let score = Number(thisParent.querySelector('p').textContent);
+
+	if (e.target.tagName === 'BUTTON') {
+		const imageSrc = thisParent.querySelector('img').src;
+
+		const voteObj = {
+			user: newUser,
+			img: imageSrc
+		}
+
+		socket.emit('rights', (voteObj));
+		socket.on('disableButton', () => {
+			thisParent.querySelectorAll('button').forEach(btn => btn.style.display = 'none');
+		});
+	}
+
+
 	if (e.target.textContent === 'bad') {
 		if (score < 25) {
 			thisParent.style.opacity = .2;

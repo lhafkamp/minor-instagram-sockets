@@ -16,6 +16,9 @@ app.use(express.static('public'));
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
+
+app.set('socketio', io);
+
 // mongoDB
 const MONGO_USER = process.env.MONGO_USER;
 const MONGO_PASS = process.env.MONGO_PASS;
@@ -28,7 +31,8 @@ const Schema = mongoose.Schema;
 // imageSchema
 const imageSchema = new Schema({
 	name: String,
-	image: String
+	image: String,
+	rights: []
 });
 
 const Image = mongoose.model('Image', imageSchema);
@@ -118,6 +122,9 @@ app.get('/main', (req, res) => {
 	setInterval(() => {
 		request(`https://api.instagram.com/v1/users/${userId}/media/recent/?access_token=${aToken}`, (error, response, body) => {
 			data = JSON.parse(body);
+
+			io.sockets.emit('newUser', data.data[0].user.id);
+
 			imageData = data.data[0].images.low_resolution.url;
 			Image.find({ image: imageData }, (err, image) => {
 				if (!image.length > 0) {
@@ -135,11 +142,11 @@ app.get('/main', (req, res) => {
 				}
 			});
 		});
-	}, 3000);
+
+	}, 4000);
 
 	res.render('main', {
-		imageArray: imageArray,
-		userName: userName
+		imageArray: imageArray
 	});
 });
 
@@ -166,6 +173,20 @@ io.on('connection', socket => {
 			io.sockets.emit('removeFromDOM', remove);
 		});
 	})
+
+
+	socket.on('rights', (voteObj) => {
+		Image.findOne({ image: voteObj.img }, (err, data) => {
+			const newRights = data.rights;
+			newRights.push(voteObj.user);
+
+			Image.update({ rights: newRights }, (err, rights => {
+				console.log('rights set');
+			}));
+		});
+
+		// io.sockets.emit('disableButton');
+	});
 });
 
 // run the app

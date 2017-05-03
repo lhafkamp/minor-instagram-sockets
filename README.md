@@ -47,4 +47,3 @@ To start the server on port `4000`
 -  [ ] loading indicator for new images
 -  [ ] profile pages where you can check how your photo's are holding up
 -  [ ] categories
-
