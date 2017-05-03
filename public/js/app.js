@@ -1,1 +1,4 @@
-// const x = require('./x');
+console.log('ping');
+require('./yayornay');
+require('./io');
+console.log('pong');

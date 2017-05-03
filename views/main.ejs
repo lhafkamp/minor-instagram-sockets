@@ -1,0 +1,20 @@
+<%- include ./part/header.ejs %>
+
+<div>
+	<div class="pics">
+		<% imageArray.forEach((image) => { %>
+			<div class="pic">
+				<div>
+					<img src="<%= image %>"/>
+					<p>100</p>
+				</div>
+				<div>
+					<button>bad</button>
+					<button>good</button>
+				</div>
+			</div>
+		<% }); %>
+	</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<%- include ./part/footer.ejs %>
