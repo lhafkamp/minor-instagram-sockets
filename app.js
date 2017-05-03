@@ -138,7 +138,8 @@ app.get('/main', (req, res) => {
 	}, 3000);
 
 	res.render('main', {
-		imageArray: imageArray
+		imageArray: imageArray,
+		userName: userName
 	});
 });
 
