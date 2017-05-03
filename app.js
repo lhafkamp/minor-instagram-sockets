@@ -24,7 +24,8 @@ const Schema = mongoose.Schema;
 // imageSchema
 const imageSchema = new Schema({
 	name: String,
-	image: String
+	image: String,
+	rights: []
 });
 
 const Image = mongoose.model('Image', imageSchema);
@@ -131,7 +132,6 @@ app.get('/main', (req, res) => {
 				}
 			});
 		});
-	}, 3000);
 
 	res.render('main', {
 		imageArray: imageArray

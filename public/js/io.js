@@ -2,9 +2,6 @@ const socket = io();
 const addNewPic = document.querySelector('.pics');
 const allImages = document.querySelectorAll('.pics .pic div img');
 
-// allImages.forEach(image => image.parentNode.parentNode);
-// allImages.forEach(image => image.src);
-
 socket.on('newPic', (data) => {
 	const newPics = data.image;
 	addNewPic.insertAdjacentHTML('beforeend', `
