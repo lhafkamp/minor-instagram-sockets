@@ -16,6 +16,8 @@ app.use(express.static('public'));
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
+app.set('socketio', io);
+
 // mongoDB
 mongoose.Promise = global.Promise;
 mongoose.connect(`mongodb://127.0.0.1:27017`);
@@ -112,22 +114,6 @@ Image.find({}, (err, objects) => {
 
 // render the main page with instagram data
 app.get('/main', (req, res) => {
-
-	User.find({ user_id: '294505586' }, (err, data) => {
-		let userData = data[0].user_id;
-		Image.find({ rights: userData }, (err, data) => {
-			let userRights = data[0].rights;
-			let imageWithRights = data[0].image;
-			if (err) {
-				console.log('user didnt vote');
-			} else {
-				let newUserRights = '';
-				if (userRights.includes(userData)) {
-					io.sockets.emit('hidingButton', newUserRights);	
-				}
-			}
-		});
-	})
 	
 	setInterval(() => {
 		request(`https://api.instagram.com/v1/users/${userId}/media/recent/?access_token=${aToken}`, (error, response, body) => {
@@ -155,6 +141,23 @@ app.get('/main', (req, res) => {
 
 	res.render('main', {
 		imageArray: imageArray
+	});
+
+	io.on('connection', socket => {
+		User.find({ user_id: '294505586' }, (err, data) => {
+			let userData = data[0].user_id;
+			Image.find({ rights: userData }, (err, data) => {
+				let userRights = data[0].rights;
+				let imageWithRights = data[0].image;
+				if (err) {
+					console.log('user didnt vote');
+				} else {
+					if (userRights.includes(userData)) {
+						io.sockets.emit('hidingButton', imageWithRights);	
+					}
+				}
+			});
+		});
 	});
 });
 

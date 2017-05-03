@@ -1,27 +1,19 @@
 const socket = io();
-
 const photo = document.querySelectorAll('.pic img');
 const counter = document.querySelectorAll('.pic p');
 const bad = document.querySelectorAll('button:first-of-type');
 const good = document.querySelectorAll('button:last-of-type');
+const allImages = document.querySelectorAll('.pics .pic div img');
+let newUser = '';
 
-let imageArray = [];
-const images = document.body.querySelectorAll('img').forEach(img => imageArray.push(img.src));
-
-socket.on('removeButton', (userRights) => {
-	const newImageData = document.body.querySelectorAll('img')
-		.forEach(img => img.src)
-		.filter(data => data === userRights)
-		setTimeout(function() {
-			console.log(newImageData);
-		}, 3000);
-	// if (imageArray.includes(userRights)) {
-
-	// }
+socket.on('hidingButton', (imageWithRights) => {
+	allImages.forEach(img => {
+		if (img.src === imageWithRights) {
+			img.parentNode.parentNode.querySelectorAll('div button').forEach(btn => btn.style.display = 'none');
+		}
+	})
 });
 
-
-let newUser = '';
 
 socket.on('newUser', (userId) => {
 	newUser = userId;

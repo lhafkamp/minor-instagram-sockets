@@ -1,4 +1,4 @@
-const socket = io();
+const socket = io()
 const addNewPic = document.querySelector('.pics');
 const allImages = document.querySelectorAll('.pics .pic div img');
 
