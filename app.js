@@ -168,6 +168,6 @@ io.on('connection', socket => {
 });
 
 // run the app
-http.listen(4000, () => {
-	console.log('Running on http://localhost:4000');
+http.listen(process.env.PORT || 4000, function(){
+  console.log('listening on', http.address().port);
 });
