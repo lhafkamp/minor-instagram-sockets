@@ -21,8 +21,8 @@ const MONGO_USER = process.env.MONGO_USER;
 const MONGO_PASS = process.env.MONGO_PASS;
 
 mongoose.Promise = global.Promise;
-mongoose.connect(`mongodb://127.0.0.1:27017`);
-// mongoose.connect(`mongodb://${MONGO_USER}:${MONGO_PASS}@ds131041.mlab.com:31041/instabase`);
+// mongoose.connect(`mongodb://127.0.0.1:27017`);
+mongoose.connect(`mongodb://${MONGO_USER}:${MONGO_PASS}@ds131041.mlab.com:31041/instabase`);
 const Schema = mongoose.Schema;
 
 // imageSchema
