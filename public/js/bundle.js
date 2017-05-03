@@ -8,6 +8,7 @@ console.log('pong');
 const socket = io()
 const addNewPic = document.querySelector('.pics');
 const allImages = document.querySelectorAll('.pics .pic div img');
+
 socket.on('newPic', (data) => {
 	const newPics = data.image;
 	addNewPic.insertAdjacentHTML('beforeend', `
@@ -60,7 +61,6 @@ socket.on('newUser', (userId) => {
 	newUser = userId;
 });
 
-
 function scoreCounter(e) {
 	const thisParent = e.target.parentNode.parentNode
 	let score = Number(thisParent.querySelector('p').textContent);
@@ -78,7 +78,6 @@ function scoreCounter(e) {
 			thisParent.querySelectorAll('button').forEach(btn => btn.style.display = 'none');
 		});
 	}
-
 
 	if (e.target.textContent === 'bad') {
 		if (score < 25) {
@@ -104,6 +103,12 @@ function scoreCounter(e) {
 }
 
 document.body.addEventListener('click', scoreCounter);
+
+socket.on('disconnect', () => {
+	alert('server disconnected, buttons are disabled until the server is back up (try to refresh)');
+	bad.forEach(btn => btn.disabled = true);
+	good.forEach(btn => btn.disabled = true);
+});
 
 
 },{}]},{},[1]);

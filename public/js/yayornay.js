@@ -63,3 +63,9 @@ function scoreCounter(e) {
 
 document.body.addEventListener('click', scoreCounter);
 
+socket.on('disconnect', () => {
+	alert('server disconnected, buttons are disabled until the server is back up (try to refresh)');
+	bad.forEach(btn => btn.disabled = true);
+	good.forEach(btn => btn.disabled = true);
+});
+

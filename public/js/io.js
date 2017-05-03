@@ -29,5 +29,5 @@ allImages.forEach(image => {
 			console.log('image NOT deleted from the DOM');
 		}
 	});
-
 })
+
