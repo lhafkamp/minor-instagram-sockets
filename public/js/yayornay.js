@@ -5,6 +5,22 @@ const counter = document.querySelectorAll('.pic p');
 const bad = document.querySelectorAll('button:first-of-type');
 const good = document.querySelectorAll('button:last-of-type');
 
+let imageArray = [];
+const images = document.body.querySelectorAll('img').forEach(img => imageArray.push(img.src));
+
+socket.on('removeButton', (userRights) => {
+	const newImageData = document.body.querySelectorAll('img')
+		.forEach(img => img.src)
+		.filter(data => data === userRights)
+		setTimeout(function() {
+			console.log(newImageData);
+		}, 3000);
+	// if (imageArray.includes(userRights)) {
+
+	// }
+});
+
+
 let newUser = '';
 
 socket.on('newUser', (userId) => {
