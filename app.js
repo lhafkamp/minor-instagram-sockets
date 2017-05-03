@@ -143,22 +143,22 @@ app.get('/main', (req, res) => {
 		imageArray: imageArray
 	});
 
-	io.on('connection', socket => {
-		User.find({ user_id: '294505586' }, (err, data) => {
-			let userData = data[0].user_id;
-			Image.find({ rights: userData }, (err, data) => {
-				let userRights = data[0].rights;
-				let imageWithRights = data[0].image;
-				if (err) {
-					console.log('user didnt vote');
-				} else {
-					if (userRights.includes(userData)) {
-						io.sockets.emit('hidingButton', imageWithRights);	
-					}
-				}
-			});
-		});
-	});
+	// io.on('connection', socket => {
+	// 	User.find({ user_id: 'XXXXXXXX' }, (err, data) => {
+	// 		let userData = data[0].user_id;
+	// 		Image.find({ rights: userData }, (err, data) => {
+	// 			let userRights = data[0].rights;
+	// 			let imageWithRights = data[0].image;
+	// 			if (err) {
+	// 				console.log('user didnt vote');
+	// 			} else {
+	// 				if (userRights.includes(userData)) {
+	// 					io.sockets.emit('hidingButton', imageWithRights);	
+	// 				}
+	// 			}
+	// 		});
+	// 	});
+	// });
 });
 
 // 404
@@ -195,7 +195,7 @@ io.on('connection', socket => {
 			}));
 		});
 
-		io.sockets.emit('disableButton');
+		// io.sockets.emit('disableButton');
 	});
 });
 
