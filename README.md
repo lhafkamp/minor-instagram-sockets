@@ -254,7 +254,7 @@ To complete this you run `npm run build` which compiles the app.js (with all the
 -  [ ] profile pages where you can check how your photo's are holding up
 -  [ ] categories
 
-##Sources
+## Sources
 
 <a href="https://www.instagram.com/developer/">https://www.instagram.com/developer/</a>  
 <a href="http://browserify.org/">http://browserify.org/</a>  
@@ -263,7 +263,7 @@ To complete this you run `npm run build` which compiles the app.js (with all the
 <a href="https://www.mongodb.com/">https://www.mongodb.com/</a>  
 <a href="http://mongoosejs.com/">http://mongoosejs.com/</a>  
 
-##License
+## License
 
 MIT License  
 Copyright © 2017 Luuk Hafkamp
