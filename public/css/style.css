@@ -4,6 +4,12 @@ body {
 	font-family: sans-serif;
 }
 
+h1,
+h2,
+p {
+	text-align: center;
+}
+
 .pics {
 	display: flex;
 	justify-content: center;
