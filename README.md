@@ -94,7 +94,7 @@ newUser.save((err) => {
 Create a new user with an id and a name and save it to the database.
 
 ## OAuth with Instagram
-In order to use the <a href="https://www.instagram.com/developer/">Instagram API</a> you need to set up an OAuth.
+In order to use the <a href="https://www.instagram.com/developer/">Instagram API</a> I had to set up an OAuth.
 
 Once you start up the app I make a link with the following URL:  
 ```javascript
@@ -108,9 +108,10 @@ const client_secret = process.env.CLIENT_SECRET;
 const redirect_uri = process.env.REDIRECT_URI;
 const response_type = 'code';
 const scope = 'basic+public_content';
-```javascript
+```
 
 Once you accept to the terms I use a POST request:
+
 ```javascript
 request.post({
 	uri: 'https://api.instagram.com/oauth/access_token',
@@ -124,15 +125,108 @@ request.post({
 }, (err, response, body) => {
 	data = JSON.parse(body);
 }
-```
+```  
+
 Which will return an acces token that I can use to make calls to the API.
+
+## Socket.io
+To make my app real-time I needed a websocket connection that speaks between the client and the server. The easiest way to achieve this was by using the <a href="https://socket.io/">socket.io</a> package.
+
+Here's an example of how I used the sockets from __server side to client side__ 
+__Server side__  
+
+```javascript
+setInterval(() => {
+	request(`https://api.instagram.com/v1/users/${userId}/media/recent/?access_token=${aToken}`, (error, response, body) => {
+		data = JSON.parse(body);
+
+		imageData = data.data[0].images.low_resolution.url;
+		Image.find({ image: imageData }, (err, image) => {
+			if (!image.length > 0) {
+				const img = new Image({
+					name: 'picture',
+					image: imageData
+				});
+
+				img.save((err) => {
+					if (err) throw err;
+					console.log('new image saved succesfully!');
+				});
+
+				io.sockets.emit('newPic', img);
+			}
+		});
+	});
+
+}, 1000);
+```
+Here I used the acces token we talked of earlier to do an API request. The API sends back the most recent image the logged in user has taken. If the image doesn't exist yet, I save the picture in the database. And send the img variable to the client. In order to get the latest pictures I used a setInterval function to keep the sockets updated.
+
+__Client side__  
+```javascript
+socket.on('newPic', (data) => {
+	const newPics = data.image;
+	addNewPic.insertAdjacentHTML('beforeend', `
+	<div class="pic">
+		<div>
+			<img src="${newPics}"/>
+			<p>100</p>
+		</div>
+		<div>
+			<button>bad</button>
+			<button>good</button>
+		</div>
+	</div>
+	`)
+});
+```
+The client receives the image data from the socket and uses it create a new element (the new picture) on the page.  
+
+Here's an example of how I used the sockets from __client side to server side__ 
+__Client side__  
+
+```javascript
+if (score < 25) {
+	const deadImage = this.querySelector('img').src;
+	socket.emit('remove', deadImage);
+} else {
+	score -= 25;
+}
+```
+Here I check if a rating drops below 0. If it does, it sends the element to the server.
+
+__Server side__  
+
+```javascript
+socket.on('remove', (remove) => {
+	Image.findOneAndRemove({ image: remove }, (err) => {
+		if (err) throw err;
+		console.log('Image deleted!');
+	});
+});
+```
+If the deadImage variable is in the database it will be removed.
+
+## When the server is down
+Once the server is down it sends the following 'disconnect' socket to the client that makes sure the client knows its down and makes the rating buttons unusable until the server runs again:
+
+```javascript
+socket.on('disconnect', () => {
+	alert('server disconnected, buttons are disabled until the server is back up (try to refresh)');
+	bad.forEach(btn => btn.disabled = true);
+	good.forEach(btn => btn.disabled = true);
+});
+```
 
 ## Tooling
 In order to use 'require' client side I used <a href="http://browserify.org/">Browserify</a> to make 1 bundle.js which combines all the Javascript files.
 
 For example, in a random.js file you can use:  
-`const random = 'wow this is random';`  
-`module.exports = random;`  
+
+```javascript
+const random = 'wow this is random';
+module.exports = random;
+```
 
 And in the app.js file you require the exported file:
 
