@@ -253,3 +253,17 @@ To complete this you run `npm run build` which compiles the app.js (with all the
 -  [ ] loading indicator for new images
 -  [ ] profile pages where you can check how your photo's are holding up
 -  [ ] categories
+
+##Sources
+
+<a href="https://www.instagram.com/developer/">https://www.instagram.com/developer/</a>  
+<a href="http://browserify.org/">http://browserify.org/</a>  
+<a href="https://www.npmjs.com/package/dotenv">https://www.npmjs.com/package/dotenv</a>  
+<a href="https://expressjs.com/">https://expressjs.com/</a>  
+<a href="https://www.mongodb.com/">https://www.mongodb.com/</a>  
+<a href="http://mongoosejs.com/">http://mongoosejs.com/</a>  
+
+##License
+
+MIT License  
+Copyright © 2017 Luuk Hafkamp

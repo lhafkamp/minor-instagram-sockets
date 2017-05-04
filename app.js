@@ -187,10 +187,6 @@ io.on('connection', socket => {
 });
 
 // run the app
-// http.listen(process.env.PORT || 4000, () =>{
-//   console.log('listening on', http.address().port);
-// });
-
-http.listen(4000, () =>{
+http.listen(process.env.PORT || 4000, () =>{
   console.log('listening on', http.address().port);
 });
