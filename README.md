@@ -132,7 +132,7 @@ Which will return an acces token that I can use to make calls to the API.
 ## Socket.io
 To make my app real-time I needed a websocket connection that speaks between the client and the server. The easiest way to achieve this was by using the <a href="https://socket.io/">socket.io</a> package.
 
-Here's an example of how I used the sockets from __server side to client side__ 
+Here's an example of how I used the sockets from __server side to client side__  
 __Server side__  
 
 ```javascript
@@ -182,7 +182,7 @@ socket.on('newPic', (data) => {
 ```
 The client receives the image data from the socket and uses it create a new element (the new picture) on the page.  
 
-Here's an example of how I used the sockets from __client side to server side__ 
+Here's an example of how I used the sockets from __client side to server side__  
 __Client side__  
 
 ```javascript
