@@ -16,9 +16,6 @@ app.use(express.static('public'));
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-
-app.set('socketio', io);
-
 // mongoDB
 const MONGO_USER = process.env.MONGO_USER;
 const MONGO_PASS = process.env.MONGO_PASS;
@@ -143,7 +140,7 @@ app.get('/main', (req, res) => {
 			});
 		});
 
-	}, 4000);
+	}, 2000);
 
 	res.render('main', {
 		imageArray: imageArray
@@ -190,6 +187,10 @@ io.on('connection', socket => {
 });
 
 // run the app
-http.listen(process.env.PORT || 4000, function(){
+// http.listen(process.env.PORT || 4000, () =>{
+//   console.log('listening on', http.address().port);
+// });
+
+http.listen(4000, () =>{
   console.log('listening on', http.address().port);
 });

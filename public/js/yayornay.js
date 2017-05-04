@@ -15,7 +15,6 @@ socket.on('hidingButton', (imageWithRights) => {
 	})
 });
 
-
 socket.on('newUser', (userId) => {
 	newUser = userId;
 });
