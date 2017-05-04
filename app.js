@@ -143,7 +143,7 @@ app.get('/main', (req, res) => {
 			});
 		});
 
-	}, 3000);
+	}, 4000);
 
 	res.render('main', {
 		imageArray: imageArray
